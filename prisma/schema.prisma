@@ -1,0 +1,43 @@
+generator client {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  assessments  Assessment[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Assessment {
+  id        String   @id @default(cuid())
+  title     String
+  subject   String
+  room      String
+  type      String
+  date      String
+  time      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tasks     Task[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id           String      @id @default(cuid())
+  text         String
+  done         Boolean     @default(false)
+  assessmentId String
+  assessment   Assessment  @relation(fields: [assessmentId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
